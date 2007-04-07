@@ -2,7 +2,6 @@ import os, sys
 import pygame
 from pygame.locals import *
 from random import uniform
-from data import load_image
 
 
 # Constantes
@@ -103,8 +102,15 @@ class Bar:
         pass
 
 
+def load_image(name):
+    """funcion general para cargar imagenes de forma facil"""
+    fullname = os.path.join('data', name)
+    image = pygame.image.load(fullname)
+    image = image.convert_alpha()
+    return image, image.get_rect()
 
-def test():
+
+def main():
     # Inicializamos la pantalla
 #    import pdb; pdb.set_trace()
     pygame.init()
@@ -155,4 +161,4 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    main()
