@@ -99,7 +99,7 @@ def main():
 
             for i in bolas.mapa.ids_bares: 
                 bares[i].update()
-                if bares[i].cambioHumor == 1 and bares[i].humor == 'enojado':
+                if bares[i].cambioHumor == 1 and bares[i].humor == 'angry':
                     sotano.golpizaMaton()
                 bares[i].draw(screen, 70 * (2*j) - 70, 64)
                 j = j + 1
