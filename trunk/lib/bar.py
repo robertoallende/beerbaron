@@ -15,7 +15,7 @@ RESTA_PRECIO = 10000
 PRECIO_TICK = 10
 # Parametros opr defecto para el bar:
 PRECIO_DEFAULT = 1000
-HUMOR_DEFAULT = 'maso'
+HUMOR_DEFAULT = 'moody'
 VELOCIDAD_HUMOR_DEFAULT = 500
 
 
@@ -28,7 +28,7 @@ class Bar:
         else:
             self.precio = precio
 
-        if humor is None or humor not in ['contento', 'maso', 'enojado']:
+        if humor is None or humor not in ['happy', 'moody', 'angry']:
             self.humor = HUMOR_DEFAULT
         else:  
             self.humor = humor
@@ -46,19 +46,19 @@ class Bar:
 
     def update(self):
         if self.alcohol:
-            self.humor = 'contento'
+            self.humor = 'happy'
             self.cambioHumor = self.generar_velocidad_humor()
             self.precio = max(MIN_PRECIO, self.precio-RESTA_PRECIO)
         else:
             self.precio = self.precio + PRECIO_TICK
             self.cambioHumor = self.cambioHumor - 1
             if self.cambioHumor == 0:
-                if self.humor == 'enojado':
+                if self.humor == 'angry':
                     self.mandarMatones()
-                elif self.humor == 'maso':
-                    self.humor = 'enojado'
-                elif self.humor == 'contento':
-                    self.humor = 'maso'
+                elif self.humor == 'moody':
+                    self.humor = 'angry'
+                elif self.humor == 'happy':
+                    self.humor = 'moody'
 
                 self.cambioHumor = self.generar_velocidad_humor()
         self.alcohol = False
@@ -76,9 +76,9 @@ class Bar:
 
         # Dibujar el humor
         bg = 255, 255, 255
-        if self.humor == 'enojado':
+        if self.humor == 'angry':
             fg = 255, 0, 0
-        elif self.humor == 'maso':
+        elif self.humor == 'moody':
             fg = 250, 200, 60
         else:
             fg = 0, 255, 0
