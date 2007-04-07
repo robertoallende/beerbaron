@@ -14,32 +14,34 @@ from pygame.locals import *
 
 from data import load_image
 from tuberia import *
+from escenario import *
 from bar import Bar
 
 def main():
 	# Inicializamos la pantalla
 	pygame.init()
 	screen = pygame.display.set_mode((800, 600))
-	pygame.display.set_caption('TUBERIA 0.1')
+	pygame.display.set_caption('BaronBeer v0.01')
 	clock = pygame.time.Clock()
 
 	# rellenamos el fondo
 	background = pygame.Surface(screen.get_size())
+	organic = Spriteador((0,0),'organic.jpg')
 	background = background.convert()
 	background.fill((163, 108, 54))
 
 	# mostramos un texto
-	font = pygame.font.Font(None, 36)
-	text = font.render("TUBERIA 0.1", 1, (10, 10, 10))
-	textpos = text.get_rect()
-	textpos.centerx = background.get_rect().centerx
-	background.blit(text, textpos)
+	#font = pygame.font.Font(None, 36)
+	#text = font.render("TUBERIA 0.1", 1, (10, 10, 10))
+	#textpos = text.get_rect()
+	#textpos.centerx = background.get_rect().centerx
+	#background.blit(text, textpos)
 
-	spriter = Spriteador((100,100),'bola11.png')
-	
+	spriter = Spriteador((0,0),'bola1.gif')
+	ciudad_fondo, ciudad_fondo_rect = load_image('ciudad_fondo.jpg')
 	#generamos los Mapas
 	bolas = Bola(spriter.image, spriter.position, background,1000)
-	m = bolas.graphMap(400,300)
+	m = bolas.graphMap(500,100, 0, 150)
 	for t in m:
             background.blit(t.image, t.position)
         bolas.state_change_view()
@@ -52,6 +54,11 @@ def main():
             bares[key] = Bar()
             bares[key].draw(screen, 500, 100*i)
             i = i + 1
+
+	# El Sotano
+	sotano = Escenario(100, 1000)
+	sotano.draw(screen, 300, 400)
+
 	
 	# actualizamos(blit) todo en la pantalla
 	screen.blit(background, (0, 0))
@@ -74,8 +81,7 @@ def main():
 
                     if estado:
                         # Actualizar bares
-                        for i in bares.keys():
-                            bares[bolas.final_bar].alcohol = True
+                        bares[bolas.final_bar].alcohol = True
                 
                 if pygame.mouse.get_pressed()[0] == 0 :
                     release1 = 1
@@ -84,12 +90,15 @@ def main():
                     release2 = 0
                 if pygame.mouse.get_pressed()[2] == 0:
                     release2 = 1
-                screen.blit(background, (0, 0))
-
+	    
+            screen.blit(background, (0, 0))
+	    sotano.draw(screen, 0, 360)
+	    screen.blit(ciudad_fondo,(0,0))
+	    
             j = 1
-            for i in bares.keys(): 
+            for i in bolas.mapa.ids_bares: 
                 bares[i].update()
-                bares[i].draw(screen, 500, 100*j)
+                bares[i].draw(screen, 70 * (2*j) - 70, 50)
                 j = j + 1
 
             pygame.display.flip()

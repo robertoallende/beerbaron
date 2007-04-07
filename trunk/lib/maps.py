@@ -1,8 +1,5 @@
 from grafoGen import grafo
 
-# Cada mapa tiene que definir las variables ids_bares (con los ids de los bares que son nodos)
-# y sotano (el nodo raiz)
-
 """metodo para la construccion de niveles:
 definimos los nodos numerados y con el nombre generico de "nodo" ej: nodo1, nodo2 , ect.
 el numero corresponde a la ubicacion nodo1 es el primer nodo nodo2 es el segundo, etc ordenados asi:
@@ -125,16 +122,16 @@ class Map3:
         asignemos a los nodos"""
         g = grafo()
         #definimos los nodos
-        g.nodo("nodo1",0, 198*esc,  400*esc)
-        g.nodo("nodo2",1, 198*esc,  301*esc)
-        g.nodo("nodo3",2, 165*esc,  201*esc)
-        g.nodo("nodo4",3, 231*esc,   101*esc)
-        g.nodo("nodo5",4, 99*esc,  101*esc)
-        g.nodo("nodo6",4, 330*esc,  1*esc)
-        g.nodo("nodo7",4, 264*esc,  1*esc)
-        g.nodo("nodo8",4, 198*esc,  1*esc)
-        g.nodo("nodo9",4, 132*esc,  1*esc)
-        g.nodo("nodo10",4, 66*esc,  1*esc)
+        g.nodo("nodo1",0, 400*esc,  300*esc)
+        g.nodo("nodo2",1, 400*esc,  201*esc)
+        g.nodo("nodo3",2, 245*esc,  151*esc)
+        g.nodo("nodo4",3, 451*esc,   50*esc)
+        g.nodo("nodo5",3, 129*esc,  50*esc)
+        g.nodo("nodo6",4, 700*esc,  1*esc)
+        g.nodo("nodo7",4, 550*esc,  1*esc)
+        g.nodo("nodo8",4, 350*esc,  1*esc)
+        g.nodo("nodo9",4, 250*esc,  1*esc)
+        g.nodo("nodo10",4, 70*esc,  1*esc)
         #aristas
         g.arista("nodo1", "nodo2")
         g.arista("nodo2", "nodo3")
@@ -169,9 +166,8 @@ class Map3:
         self.estados_dict = g.estado_dict
 
         #definimos los bares y el sotano
-        self.ids_bares = ['nodo6', 'nodo7', 'nodo8', 'nodo9', 'nodo10']
+        self.ids_bares = ['nodo10', 'nodo9', 'nodo8', 'nodo7', 'nodo6']
         self.sotano = 'nodo1'
-
 
 class Map1bis:
     def __init__(self, esc = 1):

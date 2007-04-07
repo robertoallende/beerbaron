@@ -21,7 +21,7 @@ VELOCIDAD_HUMOR_DEFAULT = 500
 
 class Bar:
     def __init__(self, precio=None, humor=None, velocidadHumor=None):
-	self.image, self.rect = load_image('bar'+str(int(round(uniform(1,3))))+'_'+str(int(round(uniform(1,3))))+'.gif')
+	self.image, self.rect = load_image('bar'+str(int(round(uniform(1,2))))+'_'+str(int(round(uniform(1,3))))+'.gif')
 	
         if precio is None:
             self.precio = PRECIO_DEFAULT
@@ -66,8 +66,8 @@ class Bar:
     def draw(self, screen, x, y):
 
         # Dibujar el precio 
-        bg = 255, 255, 255
-        fg = 5, 5, 5
+        bg = 5, 5, 5
+        fg = 255, 255, 255
         fuente = pygame.font.Font(None, 30)
         precio = '$'+str(self.precio)
         size = fuente.size(precio)
