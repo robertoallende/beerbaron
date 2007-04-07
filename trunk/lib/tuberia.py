@@ -100,7 +100,7 @@ class Bola:
 
         self.searchPath()
         
-        return self.objetos #los usaremos para acutalizarlos constantemente
+        return self.objetos, self.tubos #los usaremos para acutalizarlos constantemente
     def hip(self, x1, y1, x2, y2):
             """calcula la hipotenusa y el angulo en grados(para sistema de pygame)"""
             self.hipo = sqrt(pow((x1-x2),2) + pow((y1 - y2),2))
