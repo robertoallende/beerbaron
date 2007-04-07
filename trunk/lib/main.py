@@ -25,10 +25,9 @@ def main():
 	clock = pygame.time.Clock()
 
 	# rellenamos el fondo
-	background = pygame.Surface(screen.get_size())
-	organic = Spriteador((0,0),'organic.jpg')
-	background = background.convert()
-	background.fill((163, 108, 54))
+	#background = pygame.Surface(screen.get_size())
+	#background = background.convert()
+	#background.fill((163, 108, 54))
 
 	# mostramos un texto
 	#font = pygame.font.Font(None, 36)
@@ -38,12 +37,15 @@ def main():
 	#background.blit(text, textpos)
 
 	spriter = Spriteador((0,0),'bola1.gif')
+	tierra, tierra_rect = load_image('dried_mud.jpg')
 	ciudad_fondo, ciudad_fondo_rect = load_image('ciudad_fondo.jpg')
+	
 	#generamos los Mapas
-	bolas = Bola(spriter.image, spriter.position, background,1000)
+	screen.convert()
+	bolas = Bola(spriter.image, spriter.position, screen,1000)
 	m = bolas.graphMap(500,100, 0, 150)
 	for t in m:
-            background.blit(t.image, t.position)
+            screen.blit(t.image, t.position)
         bolas.state_change_view()
         #fin generar Mapas
 
@@ -61,7 +63,7 @@ def main():
 
 	
 	# actualizamos(blit) todo en la pantalla
-	screen.blit(background, (0, 0))
+	#screen.blit(background, (0, 0))
 	pygame.display.flip()
 
 	# Event loop
@@ -91,9 +93,13 @@ def main():
                     release2 = 0
                 if pygame.mouse.get_pressed()[2] == 0:
                     release2 = 1
-            screen.blit(background, (0, 0))
+            #screen.blit(background, (0, 0))
+	    screen.blit(tierra,(0,0))
             screen.blit(ciudad_fondo,(0,0))
-            sotano.draw(screen, 0, 360)
+            sotano.draw(screen, 0, 390)
+	    for t in m:
+            	screen.blit(t.image, t.position)
+            bolas.state_change_view()
             j = 1
 
 
@@ -107,3 +113,4 @@ def main():
             sotano.update()
 
             pygame.display.flip()
+	    
