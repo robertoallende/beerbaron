@@ -43,7 +43,7 @@ def main():
 	#generamos los Mapas
 	screen.convert()
 	bolas = Bola(spriter.image, spriter.position, screen,1000)
-	m = bolas.graphMap(500,100, 0, 150)
+	m, tub = bolas.graphMap(500,100, 0, 150)
 	for t in m:
             screen.blit(t.image, t.position)
         bolas.state_change_view()
@@ -97,9 +97,13 @@ def main():
 	    screen.blit(tierra,(0,0))
             screen.blit(ciudad_fondo,(0,0))
             sotano.draw(screen, 0, 390)
+	    for t in tub:
+            	screen.blit(t.image, t.position)
+            bolas.state_change_view()
 	    for t in m:
             	screen.blit(t.image, t.position)
             bolas.state_change_view()
+	    
             j = 1
 
 
