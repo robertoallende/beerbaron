@@ -1,0 +1,134 @@
+import os, sys
+import pygame
+import bar
+import tuberia
+from pygame.locals import *
+
+if not pygame.font: print 'Warning, fonts disabled'
+if not pygame.mixer: print 'Warning, sound disabled' 
+
+def load_image(name, colorkey=None):
+    fullname = os.path.join('data', name)
+    try:
+        image = pygame.image.load(fullname)
+    except pygame.error, message:
+        print 'Cannot load image:', name
+        raise SystemExit, message
+    image = image.convert()
+    if colorkey is not None:
+        if colorkey is -1:
+            colorkey = image.get_at((0,0))
+        image.set_colorkey(colorkey, RLEACCEL)
+    return image, image.get_rect()
+
+def load_sound(name):
+    class NoneSound:
+        def play(self): pass
+    if not pygame.mixer:
+        return NoneSound()
+    fullname = os.path.join('data', name)
+    try:
+        sound = pygame.mixer.Sound(fullname)
+    except pygame.error, message:
+        print 'Cannot load sound:', wav
+        raise SystemExit, message
+    return sound
+
+class Escenario:
+    def __init__(self, cantBares):
+        """genera un escenario para el juego y llama al resto de las clases"""
+
+	#suma de todo el dinero que se gano a lo largo del juego
+	self.dineroAcumulado = 0
+	self.dineroActual = 0
+	self.precioSoborno = 0
+	#cantidad de turnos para que se incremente el soborno
+	self.velocidadSoborno = 0
+	#turnos que faltan para que el soborno se actualice
+	self.turnosSoborno = 0
+	
+	# Creacion de las clases
+	self.bares = [0] * cantBares
+	for i in range(cantBares):
+		self.bares[i] = Bar(1000, 'maso', 500)
+	self.tuberia = tuberia()
+
+    def update():
+        """genera y envia los tics del juego"""
+        pass
+	    
+    def golpizaMaton():
+        """genera """
+	m = Maton()
+	m.golpiza()
+        pass
+		    
+    def golpizaMatonFatal():
+        """genera """
+	m = Maton()
+	m.golpiza()
+	sel.terminar()
+        pass
+			    
+    def golpizaPolicial():
+        """genera """
+	m = Maton()
+	m.golpiza()
+	sel.terminar()
+        pass
+
+    def terminar():
+	""" termina """
+	pass
+
+class Maton:
+    def __init__(self):
+	""" genera un maton """
+	pass
+
+    def golpiza():
+	""" da la gopliza """
+	pass
+
+class Policia:
+    def __init__(self):
+	""" genera un maton """
+	pass
+
+    def golpiza():
+	""" da la gopliza """
+	pass
+
+def main():
+	# Initialise screen
+	pygame.init()
+	screen = pygame.display.set_mode((150, 50))
+	pygame.display.set_caption('Escenario 1')
+
+	# Fill background
+	background = pygame.Surface(screen.get_size())
+	background = background.convert()
+	background.fill((250, 250, 250))
+
+	# Display some text
+	font = pygame.font.Font(None, 36)
+	text = font.render("Hola", 1, (10, 10, 10))
+	textpos = text.get_rect()
+	textpos.centerx = background.get_rect().centerx
+	background.blit(text, textpos)
+
+	# Blit everything to the screen
+	screen.blit(background, (0, 0))
+	pygame.display.flip()
+	
+	# Event loop
+	while 1:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				return
+
+		screen.blit(background, (0, 0))
+		pygame.display.flip()
+
+
+if __name__ == '__main__': main()
