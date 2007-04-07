@@ -67,7 +67,7 @@ def main():
 	# Event loop
 	release1 = 1
 	release2 = 2
-	while 1:
+	while not sotano.terminar():
             tictoc = clock.tick(60)
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -82,6 +82,7 @@ def main():
                     if estado:
                         # Actualizar bares
                         bares[bolas.final_bar].alcohol = True
+                        sotano.cobrar(bares[bolas.final_bar].precio)
                 
                 if pygame.mouse.get_pressed()[0] == 0 :
                     release1 = 1
@@ -90,15 +91,19 @@ def main():
                     release2 = 0
                 if pygame.mouse.get_pressed()[2] == 0:
                     release2 = 1
-	    
             screen.blit(background, (0, 0))
-	    sotano.draw(screen, 0, 360)
-	    screen.blit(ciudad_fondo,(0,0))
-	    
+            screen.blit(ciudad_fondo,(0,0))
+            sotano.draw(screen, 0, 360)
             j = 1
+
+
             for i in bolas.mapa.ids_bares: 
                 bares[i].update()
-                bares[i].draw(screen, 70 * (2*j) - 70, 50)
+                if bares[i].cambioHumor == 1 and bares[i].humor == 'enojado':
+                    sotano.golpizaMaton()
+                bares[i].draw(screen, 70 * (2*j) - 70, 64)
                 j = j + 1
+
+            sotano.update()
 
             pygame.display.flip()

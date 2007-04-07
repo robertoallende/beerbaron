@@ -24,20 +24,23 @@ def load_sound(name):
 class Escenario:
     def __init__(self, precioSoborno, dineroAcumulado):
         """genera un escenario para el juego y llama al resto de las clases"""
-	self.image, self.rect = load_image('Sotano.jpg')
-	#suma de todo el dinero que se gano a lo largo del juego
-	self.dineroAcumulado = dineroAcumulado
-	self.dineroActual = 0
-	self.precioSoborno = precioSoborno
-	self.cantGolpizas = 0
-	
-	#cantidad de turnos para que se cobre el soborno
-	self.velocidadSoborno = 20
-	
-	#turnos que faltan para que el soborno se actualice
-	self.turnosSoborno = 20
+        self.image, self.rect = load_image('Sotano.jpg')
+        #suma de todo el dinero que se gano a lo largo del juego
+        self.dineroAcumulado = dineroAcumulado
+        self.dineroActual = 0
+        self.precioSoborno = precioSoborno
+        self.cantGolpizas = 0
 
-	
+        #cantidad de turnos para que se cobre el soborno
+        self.velocidadSoborno = 20
+
+        #turnos que faltan para que el soborno se actualice
+        self.turnosSoborno = 20
+
+        #tiempo
+        self.timeout = 10000
+
+
 	# Creacion de las clases
 	#self.bares = [0] * cantBares
 	#for i in range(cantBares):
@@ -49,36 +52,37 @@ class Escenario:
 
     def update(self):
         """genera y envia los tics del juego"""
-	#self.tuberia.update()
-	for bar in self.bares:
-		bar.update()
+        self.timeout = self.timeout - 1
+        #self.tuberia.update()
+        #for bar in self.bares:
+            #bar.update()
 
-	if self.turnosSoborno == 0:
-		self.pagarSoborno()
-		self.turnosSoborno = self.velocidadSoborno
-	else:
-		self.turnosSoborno = self.turnosSoborno - 1
+        #if self.turnosSoborno == 0:
+            #self.pagarSoborno()
+            #self.turnosSoborno = self.velocidadSoborno
+        #else:
+            #self.turnosSoborno = self.turnosSoborno - 1
 
     def pagarSoborno(self):
-	""" """
-	p = Policia()
-	p.cobrarSoborno()
-	self.dineroActual = self.dineroActual - self.precioSoborno
-	if self.dineroActual < 0:
-		self.golpizaPolicial()
+        """ """
+        p = Policia()
+        p.cobrarSoborno()
+        self.dineroActual = self.dineroActual - self.precioSoborno
+        if self.dineroActual < 0:
+            self.golpizaPolicial()
 
     def cobrar(self, precioCerveza):
-	""" resultado de la llegada de una bola a un bar """
-	self.dineroActual = self.dineroActual + self.precioCerveza
-    
+        """ resultado de la llegada de una bola a un bar """
+        self.dineroActual = self.dineroActual + precioCerveza
+
     def golpizaMaton(self):
         """genera """
-	m = Maton()
-	m.golpiza()
-	self.cantGolpizas = self.cantGolpizas + 1
-	# es golpiza fatal
-	if self.cantGolpizas == 3:
-		self.terminar()
+        #m = Maton()
+        #m.golpiza()
+        self.cantGolpizas = self.cantGolpizas + 1
+        # es golpiza fatal
+        #if self.cantGolpizas == 3:
+           #self.terminar()
 		    
 #    def golpizaMatonFatal(self):
 #        """genera """
@@ -88,19 +92,42 @@ class Escenario:
 			    
     def golpizaPolicial(self):
         """genera """
-	p = Policia()
-	p.golpiza()
-	self.terminar()
-        pass
+        p = Policia()
+        p.golpiza()
+        self.terminar()
+
 
     def terminar(self):
-	""" termina """
-	# Mensaje de fin
-	# Actualizar record
-	pass
+       """ termina """
+       # Mensaje de fin
+       # Actualizar record
+       if self.timeout <= 0 or self.cantGolpizas == 1:
+           return True
+       else:
+           return False
 
     def draw(self, screen, x, y):
         screen.blit(self.image, (x, y))
+
+        # dibujar dinero actual
+        bg = 5, 5, 5
+        fg = 255, 255, 255
+        fuente = pygame.font.Font(None, 30)
+        dinero = '$'+str(self.dineroActual)
+        size = fuente.size(dinero)
+        pesos = fuente.render(dinero, 0, fg)
+        screen.blit(pesos, (x+500, y+130))
+
+        # dibujar tiempo restante
+        bg = 5, 5, 5
+        fg = 255, 255, 255
+        fuente = pygame.font.Font(None, 30)
+        tiempo = str(self.timeout)
+        size = fuente.size(tiempo)
+        pesos = fuente.render(tiempo, 0, fg)
+        screen.blit(pesos, (x+500, y+100))
+
+
 
 
 class Maton:
@@ -179,8 +206,6 @@ def main():
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
-		elif event.type == KEYDOWN and event.key == K_ESCAPE:
-		    return
                 if pygame.mouse.get_pressed()[0] == 1 and release1 == 1:# event.type == MOUSEBUTTONDOWN[1]:
                     print "BOTON 1 MOUSE"
                     mouse_pos =  pygame.mouse.get_pos()
@@ -205,7 +230,7 @@ def main():
             j = 1
             for i in bolas.mapa.ids_bares: 
                 bares[i].update()
-                bares[i].draw(screen, 70 * (2*j) - 70, 64)
+                bares[i].draw(screen, 70 * (2*j) - 70, 50)
                 j = j + 1
 
             pygame.display.flip()
