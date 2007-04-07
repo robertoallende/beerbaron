@@ -8,20 +8,6 @@ from data import load_image
 if not pygame.font: print 'Warning, fonts disabled'
 if not pygame.mixer: print 'Warning, sound disabled' 
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error, message:
-        print 'Cannot load image:', name
-        raise SystemExit, message
-    image = image.convert()
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0,0))
-        image.set_colorkey(colorkey, RLEACCEL)
-    return image, image.get_rect()
-
 def load_sound(name):
     class NoneSound:
         def play(self): pass
@@ -36,9 +22,9 @@ def load_sound(name):
     return sound
 
 class Escenario:
-    def __init__(self, cantBares, background, screen, precioSoborno, dineroAcumulado):
+    def __init__(self, precioSoborno, dineroAcumulado):
         """genera un escenario para el juego y llama al resto de las clases"""
-
+	self.image, self.rect = load_image('Sotano.jpg')
 	#suma de todo el dinero que se gano a lo largo del juego
 	self.dineroAcumulado = dineroAcumulado
 	self.dineroActual = 0
@@ -50,16 +36,16 @@ class Escenario:
 	
 	#turnos que faltan para que el soborno se actualice
 	self.turnosSoborno = 20
-	self.image, self.rect = load_image('Sotano.jpg')
+
 	
 	# Creacion de las clases
-	self.bares = [0] * cantBares
-	for i in range(cantBares):
-		self.bares[i] = Bar(1000, 'maso', 500)
-		self.bares[i].draw(screen)
+	#self.bares = [0] * cantBares
+	#for i in range(cantBares):
+		#self.bares[i] = Bar(1000, 'maso', 500)
+		#self.bares[i].draw(screen)
 
-	spriter = Spriteador((100,100))
-	self.tuberia = Bola(spriter.image, spriter.position, background)
+	#spriter = Spriteador((100,100))
+	#self.tuberia = Bola(spriter.image, spriter.position, background)
 
     def update(self):
         """genera y envia los tics del juego"""
@@ -113,8 +99,8 @@ class Escenario:
 	# Actualizar record
 	pass
 
-    def draw(self, screen):
-        screen.blit(self.image, (200, 300))
+    def draw(self, screen, x, y):
+        screen.blit(self.image, (x, y))
 
 
 class Maton:
@@ -142,27 +128,28 @@ class Policia:
 def main():
 	# Inicializamos la pantalla
 	pygame.init()
-	screen = pygame.display.set_mode((800, 600))
+	screen = pygame.display.set_mode((800, 700))
 	pygame.display.set_caption('BaronBeer v0.01')
 	clock = pygame.time.Clock()
 
 	# rellenamos el fondo
 	background = pygame.Surface(screen.get_size())
+	organic = Spriteador((0,0),'organic.jpg')
 	background = background.convert()
 	background.fill((163, 108, 54))
 
 	# mostramos un texto
-	font = pygame.font.Font(None, 36)
-	text = font.render("TUBERIA 0.1", 1, (10, 10, 10))
-	textpos = text.get_rect()
-	textpos.centerx = background.get_rect().centerx
-	background.blit(text, textpos)
+	#font = pygame.font.Font(None, 36)
+	#text = font.render("TUBERIA 0.1", 1, (10, 10, 10))
+	#textpos = text.get_rect()
+	#textpos.centerx = background.get_rect().centerx
+	#background.blit(text, textpos)
 
 	spriter = Spriteador((0,0),'bola1.gif')
-	
+	ciudad_fondo, ciudad_fondo_rect = load_image('ciudad_fondo.jpg')
 	#generamos los Mapas
 	bolas = Bola(spriter.image, spriter.position, background,1000)
-	m = bolas.graphMap(400,300)
+	m = bolas.graphMap(500,100, 0, 150)
 	for t in m:
             background.blit(t.image, t.position)
         bolas.state_change_view()
@@ -173,7 +160,12 @@ def main():
         for i in range(5):
             key = 'nodo'+str(6+i)
             bares[key] = bar.Bar()
-            bares[key].draw(screen, 500, 100*i)
+            bares[key].draw(screen, 70 * i, 10)
+	
+	# El Sotano
+	sotano = Escenario(100, 1000)
+	sotano.draw(screen, 300, 400)
+
 	
 	# actualizamos(blit) todo en la pantalla
 	screen.blit(background, (0, 0))
@@ -187,6 +179,8 @@ def main():
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
+		elif event.type == KEYDOWN and event.key == K_ESCAPE:
+		    return
                 if pygame.mouse.get_pressed()[0] == 1 and release1 == 1:# event.type == MOUSEBUTTONDOWN[1]:
                     print "BOTON 1 MOUSE"
                     mouse_pos =  pygame.mouse.get_pos()
@@ -196,8 +190,7 @@ def main():
 
                     if estado:
                         # Actualizar bares
-                        for i in bares.keys():
-                            bares[bolas.final_bar].alcohol = True
+                        bares[bolas.final_bar].alcohol = True
                 
                 if pygame.mouse.get_pressed()[0] == 0 :
                     release1 = 1
@@ -206,12 +199,13 @@ def main():
                     release2 = 0
                 if pygame.mouse.get_pressed()[2] == 0:
                     release2 = 1
-                screen.blit(background, (0, 0))
-
+            screen.blit(background, (0, 0))
+	    screen.blit(ciudad_fondo,(0,0))
+	    sotano.draw(screen, 230, 450)
             j = 1
-            for i in bares.keys(): 
+            for i in bolas.mapa.ids_bares: 
                 bares[i].update()
-                bares[i].draw(screen, 500, 100*j)
+                bares[i].draw(screen, 70 * (2*j) - 70, 64)
                 j = j + 1
 
             pygame.display.flip()

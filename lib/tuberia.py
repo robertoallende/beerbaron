@@ -185,7 +185,7 @@ class Bola:
         self.balls_rect = []
         
         pos = self.mapa.nodos_pos
-        m = Spriteador((pos[nodo][0]+self.xoff+15,pos[nodo][1]+self.yoff+15), 'bola111.png')
+        m = Spriteador((pos[nodo][0]+self.xoff+15,pos[nodo][1]+self.yoff+15), 'bola1.gif')
         (x1, y1) = m.position
         m.rect.center = (x1 - 15, y1 - 15)
         self.balls.append(m)##object de cada sprite con sus atributos
