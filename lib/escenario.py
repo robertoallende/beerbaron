@@ -38,7 +38,7 @@ class Escenario:
         self.turnosSoborno = 20
 
         #tiempo
-        self.timeout = 5000
+        self.timeout = 100000000000000
 
 
 	# Creacion de las clases

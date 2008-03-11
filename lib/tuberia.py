@@ -37,6 +37,7 @@ class Bola:
         self.balls = []
         self.cantbolas = cantbolas
         #self.pos = image.get_rect().move(0, height)
+        self.xy_path = []
 
     def update(self):
         """da toda la informacion, cant de bolas, pos de bolas, etc"""
@@ -100,7 +101,7 @@ class Bola:
 
         self.searchPath()
         
-        return self.objetos, self.tubos #los usaremos para acutalizarlos constantemente
+        return self.objetos #los usaremos para acutalizarlos constantemente
     def hip(self, x1, y1, x2, y2):
             """calcula la hipotenusa y el angulo en grados(para sistema de pygame)"""
             self.hipo = sqrt(pow((x1-x2),2) + pow((y1 - y2),2))
@@ -109,7 +110,7 @@ class Bola:
             else:
                 self.angulo = 90-degrees(acos((x1-x2)/self.hipo))
             
-    def hit_or_not(self,mouse):
+    def hit_or_not(self,mouse,screen,background,ciudad_fondo,sotano):
         """calcula si el mouse toca a alguno de los swiches"""
         #por ahora tira un error cuando uno clickea en el ultimo nodo (bar)... se soluciona con self.rect_list.pop(-1)
         #para que no escuche a ese nodo
@@ -125,7 +126,7 @@ class Bola:
         if self.mapa.swicht_dict[id_nodo] ==2:
             if self.cantbolas != 0:
                 print "se crea una bola"
-                self.createBall(id_nodo)
+                self.createBall(id_nodo,screen,background,ciudad_fondo,sotano)
                 self.balls.append(1)
                 self.cantbolas = self.cantbolas -1
                 #self.noballs = 0
@@ -180,7 +181,7 @@ class Bola:
             aux(id,i)
             
 
-    def createBall(self,nodo):
+    def createBall(self,nodo,screen,background,ciudad_fondo,sotano):
         self.balls = []
         self.balls_rect = []
         
@@ -188,11 +189,12 @@ class Bola:
         m = Spriteador((pos[nodo][0]+self.xoff+15,pos[nodo][1]+self.yoff+15), 'bola1.gif')
         (x1, y1) = m.position
         m.rect.center = (x1 - 15, y1 - 15)
+        self.balls = []
         self.balls.append(m)##object de cada sprite con sus atributos
         self.balls_rect.append(pygame.Rect(m))
 
         #self.surface.blit(self.balls[-1].image, m.position)
-        self.bola_group = pygame.sprite.RenderPlain(m)
+        self.bola_group = pygame.sprite.RenderClear(m)
         self.bola_group.draw(self.surface)
 
         #simulamos el recorrido poniendo la bola en el lugar donde terminaria
@@ -200,11 +202,23 @@ class Bola:
         self.update_bar_view(3)
         #ahora si :P
         pos = self.mapa.nodos_pos[self.final_bar]
-        position = (pos[0]+self.xoff, pos[1]+self.yoff)
-        self.bola_group.update(position)
-        self.bola_group = pygame.sprite.RenderPlain(m)
-        self.bola_group.draw(self.surface)
-        #self.surface.blit(m.image,m.position)
+        
+#        for i in self.path_nodes:
+#            print self.mapa.nodos_pos[i]
+       
+#        position = (pos[0]+self.xoff, pos[1]+self.yoff)
+#        print 'position: ' + str( position )
+        self.createPath()
+
+        for i in self.xy_path:
+            self.bola_group.clear(screen,background)
+            self.bola_group.update(i)
+            self.bola_group.draw(self.surface)
+            
+        #  self.surface.blit(m.image,m.position)
+        self.bola_group.empty()
+        m.kill()
+
     def searchPath(self):
         """crea un array o un diccionario con los datos de el camino"""
         next_node= ""
@@ -228,6 +242,45 @@ class Bola:
         self.path_nodes = nodos # los id_nodes que conforman el path
         self.path_nodes_r= aux # la relacion de los id_nodes anteriores
         self.path_dict = dict(zip(nodos, aux))#un diccionario de las cosas anteriores :P
+
+    def createPath(self):
+        # coordenadas del camino
+        #for i in self.path_nodes:       
+        x = self.mapa.nodos_pos[self.path_nodes[0]][0]+self.xoff 
+        y = self.mapa.nodos_pos[self.path_nodes[0]][1]+self.yoff
+        self.xy_path.append( (x,y) )
+        xbefore = x
+        ybefore = y
+      
+        recorrido = self.path_nodes
+        recorrido.append(self.final_bar)
+ 
+        for i in range(len(recorrido)):       
+            x = self.mapa.nodos_pos[self.path_nodes[i]][0]+self.xoff 
+            y = self.mapa.nodos_pos[self.path_nodes[i]][1]+self.yoff
+
+            N = 20
+            mod_x = x - xbefore 
+            mod_y = y - ybefore  
+      
+            c = range(N) 
+            c.reverse()
+            for j in c:
+                if j/float(N) < 1:
+                    w = x - ( mod_x *  j/float(N) ) + self.xoff # xoff = 0 
+                    z = y - ( mod_y *  j/float(N) ) # yoff = 150
+                    self.xy_path.append( (w,z) )
+
+            self.xy_path.append( (x,y) )
+            xbefore = x
+            ybefore = y
+
+        pos = self.mapa.nodos_pos[self.final_bar]
+        self.xy_path.append( (pos[0]+self.xoff, pos[1]+self.yoff))
+
+
+
+#        self.xy_path.append((pos[0]+self.xoff, pos[1]+self.yoff))
 
     def update_bar_view(self, tipo=None, node=None ):
         """borra cualquier cosa dibujada sobre el nodo del bar"""
@@ -262,7 +315,6 @@ class Spriteador(pygame.sprite.Sprite):
         self.image = self.image
         self.rect = self.image.get_rect()
         self.rect.center = self.position
-
 
 def main():
 	# Inicializamos la pantalla
