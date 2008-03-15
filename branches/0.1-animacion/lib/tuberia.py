@@ -28,6 +28,29 @@ from data import load_image
 # que tiene el usuario para largar, no laragara una si no posee ninguna,en cualquier momento se peude modificar
 # la cantidad con los cambiar el valor de self.cantbolas
 
+class Ball:
+    def __init__(self, sprite, xy_path, image):
+        self.sprite = sprite
+        xy_path.reverse()
+        self.xy_path = xy_path
+        self.image = image
+        self.rect = self.image.get_rect()
+
+    def update(self, screen):
+        if len(self.xy_path) > 0:
+            pos = self.xy_path.pop()
+            self.sprite.update( pos  )
+            screen.blit(self.image, self.sprite.position)
+#        for i in self.xy_path:
+#            self.bola_group.clear(screen,background)
+#            self.bola_group.update(i)
+#            self.bola_group.draw(self.surface)
+            
+        #  self.surface.blit(m.image,m.position)
+#        self.bola_group.empty()
+#        m.kill()
+
+
 class Bola:
     def __init__(self, image, position, surface, cantbolas):
         self.image = image
@@ -37,13 +60,15 @@ class Bola:
         self.balls = []
         self.cantbolas = cantbolas
         #self.pos = image.get_rect().move(0, height)
-        self.xy_path = []
 
-    def update(self):
+    def update(self, screen):
         """da toda la informacion, cant de bolas, pos de bolas, etc"""
-        #nota: esto puede tirar el framerate a la mierda... el sistema de usar updates y no eventos.. puede ser muy
-        #ineficiente... :(
-        pass
+        for b in self.balls:
+            r = b.update(screen)
+
+            if r == False:
+                self.balls.remove(b)
+ 
     def graphMap(self, alto, ancho, xoff=30, yoff=50):
         """grafica un mapa establece el estado de swiches y los controla"""
         self.xoff = xoff
@@ -126,8 +151,8 @@ class Bola:
         if self.mapa.swicht_dict[id_nodo] ==2:
             if self.cantbolas != 0:
                 print "se crea una bola"
-                self.createBall(id_nodo,screen,background,ciudad_fondo,sotano)
-                self.balls.append(1)
+                mibola = self.createBall(id_nodo,screen,background,ciudad_fondo,sotano)
+                self.balls.append(mibola)
                 self.cantbolas = self.cantbolas -1
                 #self.noballs = 0
             else:
@@ -182,24 +207,24 @@ class Bola:
             
 
     def createBall(self,nodo,screen,background,ciudad_fondo,sotano):
-        self.balls = []
+#        self.balls = []
         self.balls_rect = []
         
         pos = self.mapa.nodos_pos
         m = Spriteador((pos[nodo][0]+self.xoff+15,pos[nodo][1]+self.yoff+15), 'bola1.gif')
-        (x1, y1) = m.position
-        m.rect.center = (x1 - 15, y1 - 15)
-        self.balls = []
-        self.balls.append(m)##object de cada sprite con sus atributos
-        self.balls_rect.append(pygame.Rect(m))
+#        (x1, y1) = m.position
+#        m.rect.center = (x1 - 15, y1 - 15)
+#        self.balls = []
+#        self.balls.append(m)##object de cada sprite con sus atributos
+#        self.balls_rect.append(pygame.Rect(m))
 
         #self.surface.blit(self.balls[-1].image, m.position)
-        self.bola_group = pygame.sprite.RenderClear(m)
-        self.bola_group.draw(self.surface)
+#        self.bola_group = pygame.sprite.RenderClear(m)
+#        self.bola_group.draw(self.surface)
 
         #simulamos el recorrido poniendo la bola en el lugar donde terminaria
         #primero borramos los nodos de los baares
-        self.update_bar_view(3)
+#        self.update_bar_view(3)
         #ahora si :P
         pos = self.mapa.nodos_pos[self.final_bar]
         
@@ -208,17 +233,10 @@ class Bola:
        
 #        position = (pos[0]+self.xoff, pos[1]+self.yoff)
 #        print 'position: ' + str( position )
-        self.createPath()
+        mibola =  Ball(m, self.createPath(), self.image)
 
-        for i in self.xy_path:
-            self.bola_group.clear(screen,background)
-            self.bola_group.update(i)
-            self.bola_group.draw(self.surface)
-            
-        #  self.surface.blit(m.image,m.position)
-        self.bola_group.empty()
-        m.kill()
-
+        return mibola
+ 
     def searchPath(self):
         """crea un array o un diccionario con los datos de el camino"""
         next_node= ""
@@ -246,38 +264,42 @@ class Bola:
     def createPath(self):
         # coordenadas del camino
         #for i in self.path_nodes:       
-        x = self.mapa.nodos_pos[self.path_nodes[0]][0]+self.xoff 
-        y = self.mapa.nodos_pos[self.path_nodes[0]][1]+self.yoff
-        self.xy_path.append( (x,y) )
+        xy_path = []
+
+        x = self.mapa.nodos_pos[self.path_nodes[0]][0]+self.xoff - 10
+        y = self.mapa.nodos_pos[self.path_nodes[0]][1]+self.yoff 
+        xy_path.append( (x,y) )
         xbefore = x
         ybefore = y
       
         recorrido = self.path_nodes
         recorrido.append(self.final_bar)
- 
-        for i in range(len(recorrido)):       
-            x = self.mapa.nodos_pos[self.path_nodes[i]][0]+self.xoff 
-            y = self.mapa.nodos_pos[self.path_nodes[i]][1]+self.yoff
 
-            N = 20
-            mod_x = x - xbefore 
-            mod_y = y - ybefore  
+        for i in  range(len(recorrido)):       
+            if i > 0:
+                x = self.mapa.nodos_pos[self.path_nodes[i]][0]+self.xoff - 10 
+                y = self.mapa.nodos_pos[self.path_nodes[i]][1]+self.yoff 
+
+                N = 20
+                mod_x = x - xbefore 
+                mod_y = y - ybefore  
       
-            c = range(N) 
-            c.reverse()
-            for j in c:
-                if j/float(N) < 1:
-                    w = x - ( mod_x *  j/float(N) ) + self.xoff # xoff = 0 
-                    z = y - ( mod_y *  j/float(N) ) # yoff = 150
-                    self.xy_path.append( (w,z) )
+                c = range(N) 
+                c.reverse()
+                for j in c:
+                    if j/float(N) < 1:
+                        w = x - ( mod_x *  j/float(N) ) + self.xoff # xoff = 0 
+                        z = y - ( mod_y *  j/float(N) ) # yoff = 150
+                        xy_path.append( (w,z) )
 
-            self.xy_path.append( (x,y) )
-            xbefore = x
-            ybefore = y
+                xy_path.append( (x,y) )
+                xbefore = x
+                ybefore = y
 
         pos = self.mapa.nodos_pos[self.final_bar]
-        self.xy_path.append( (pos[0]+self.xoff, pos[1]+self.yoff))
+        xy_path.append( (pos[0]+self.xoff, pos[1]+self.yoff))
 
+        return xy_path
 
 
 #        self.xy_path.append((pos[0]+self.xoff, pos[1]+self.yoff))

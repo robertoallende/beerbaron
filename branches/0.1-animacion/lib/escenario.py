@@ -24,7 +24,7 @@ def load_sound(name):
 class Escenario:
     def __init__(self, precioSoborno, dineroAcumulado):
         """genera un escenario para el juego y llama al resto de las clases"""
-        self.image, self.rect = load_image('Sotano.jpg')
+        self.image, self.rect = load_image('Sotano.png')
         #suma de todo el dinero que se gano a lo largo del juego
         self.dineroAcumulado = dineroAcumulado
         self.dineroActual = 0
@@ -38,7 +38,7 @@ class Escenario:
         self.turnosSoborno = 20
 
         #tiempo
-        self.timeout = 100000000000000
+        self.timeout = 1000
 
 
 	# Creacion de las clases
