@@ -105,5 +105,6 @@ def main():
                 j = j + 1
 
             sotano.update()
+            bolas.update(screen)
 
-            pygame.display.flip()
+            pygame.display.update()
