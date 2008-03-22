@@ -41,15 +41,6 @@ class Ball:
             pos = self.xy_path.pop()
             self.sprite.update( pos  )
             screen.blit(self.image, self.sprite.position)
-#        for i in self.xy_path:
-#            self.bola_group.clear(screen,background)
-#            self.bola_group.update(i)
-#            self.bola_group.draw(self.surface)
-            
-        #  self.surface.blit(m.image,m.position)
-#        self.bola_group.empty()
-#        m.kill()
-
 
 class Bola:
     def __init__(self, image, position, surface, cantbolas):
@@ -59,7 +50,6 @@ class Bola:
         self.tick = 90
         self.balls = []
         self.cantbolas = cantbolas
-        #self.pos = image.get_rect().move(0, height)
 
     def update(self, screen):
         """da toda la informacion, cant de bolas, pos de bolas, etc"""
@@ -207,34 +197,11 @@ class Bola:
             
 
     def createBall(self,nodo,screen,background,ciudad_fondo,sotano):
-#        self.balls = []
         self.balls_rect = []
-        
         pos = self.mapa.nodos_pos
         m = Spriteador((pos[nodo][0]+self.xoff+15,pos[nodo][1]+self.yoff+15), 'bola1.gif')
-#        (x1, y1) = m.position
-#        m.rect.center = (x1 - 15, y1 - 15)
-#        self.balls = []
-#        self.balls.append(m)##object de cada sprite con sus atributos
-#        self.balls_rect.append(pygame.Rect(m))
-
-        #self.surface.blit(self.balls[-1].image, m.position)
-#        self.bola_group = pygame.sprite.RenderClear(m)
-#        self.bola_group.draw(self.surface)
-
-        #simulamos el recorrido poniendo la bola en el lugar donde terminaria
-        #primero borramos los nodos de los baares
-#        self.update_bar_view(3)
-        #ahora si :P
         pos = self.mapa.nodos_pos[self.final_bar]
-        
-#        for i in self.path_nodes:
-#            print self.mapa.nodos_pos[i]
-       
-#        position = (pos[0]+self.xoff, pos[1]+self.yoff)
-#        print 'position: ' + str( position )
         mibola =  Ball(m, self.createPath(), self.image)
-
         return mibola
  
     def searchPath(self):
@@ -245,7 +212,6 @@ class Bola:
         actual_node = self.mapa.nodos[0]
         while next_node != "final":
             a = self.mapa.estados_dict[actual_node][0]
-            #a = self.mapa.swicht_dict[x] #estados de los swiches
             if a != "final":
                 next_node = self.mapa.nodos_rdict[actual_node][a] #nodos con el que colida
                 nodos.append(actual_node)
