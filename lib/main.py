@@ -79,10 +79,10 @@ def main():
                     #print estado
                     release1 = 0
 
-                    if estado:
+#                    if estado:
                         # Actualizar bares
-                        bares[bolas.final_bar].alcohol = True
-                        sotano.cobrar(bares[bolas.final_bar].precio)
+#                        bares[bolas.final_bar].alcohol = True
+#                        sotano.cobrar(bares[bolas.final_bar].precio)
                 
                 if pygame.mouse.get_pressed()[0] == 0 :
                     release1 = 1
