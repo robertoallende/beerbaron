@@ -17,7 +17,7 @@ from tuberia import *
 from escenario import *
 from bar import Bar
 
-def main():
+def game():
 	# Inicializamos la pantalla
 	pygame.init()
 	screen = pygame.display.set_mode((800, 600))
