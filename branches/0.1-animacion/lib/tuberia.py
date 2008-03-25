@@ -9,6 +9,7 @@ import bar
 from data import load_image
 
 
+
 #NOTAS:
 #de la clase BOLA:
 #self.final_bar (el id del bar final)...
@@ -35,17 +36,12 @@ class Ball:
         self.xy_path = xy_path
         self.image = image
         self.rect = self.image.get_rect()
-        self.nodo_actual = 0
-
 
     def update(self, screen):
         if len(self.xy_path) > 0:
             pos = self.xy_path.pop()
             self.sprite.update( pos  )
             screen.blit(self.image, self.sprite.position)
-            return True
-        else:
-            return False
 
 class Bola:
     def __init__(self, image, position, surface, cantbolas):
@@ -62,13 +58,8 @@ class Bola:
             r = b.update(screen)
 
             if r == False:
-                b.nodo_actual += 1 
-                path = self.createPath(b.nodo_actual)
-                if path == []:
-                    self.balls.remove(b)
-                else:
-                    b.xy_path = path
-                
+                self.balls.remove(b)
+ 
     def graphMap(self, alto, ancho, xoff=30, yoff=50):
         """grafica un mapa establece el estado de swiches y los controla"""
         self.xoff = xoff
@@ -211,7 +202,7 @@ class Bola:
         pos = self.mapa.nodos_pos
         m = Spriteador((pos[nodo][0]+self.xoff+15,pos[nodo][1]+self.yoff+15), 'bola1.gif')
         pos = self.mapa.nodos_pos[self.final_bar]
-        mibola =  Ball(m, self.createPath(0), self.image)
+        mibola =  Ball(m, self.createPath(), self.image)
         return mibola
  
     def searchPath(self):
@@ -237,51 +228,44 @@ class Bola:
         self.path_nodes_r= aux # la relacion de los id_nodes anteriores
         self.path_dict = dict(zip(nodos, aux))#un diccionario de las cosas anteriores :P
 
-    def createPath(self, nodo_actual):
+    def createPath(self):
         # coordenadas del camino
         #for i in self.path_nodes:       
         xy_path = []
+
+        x = self.mapa.nodos_pos[self.path_nodes[0]][0]+self.xoff - 10
+        y = self.mapa.nodos_pos[self.path_nodes[0]][1]+self.yoff 
+        xy_path.append( (x,y) )
+        xbefore = x
+        ybefore = y
+      
         recorrido = self.path_nodes
         recorrido.append(self.final_bar)
 
-        if (nodo_actual + 1) > len(recorrido) :
-            xy_path = []
-
-        else: 
-            x = self.mapa.nodos_pos[self.path_nodes[nodo_actual]][0]+self.xoff - 10
-            y = self.mapa.nodos_pos[self.path_nodes[nodo_actual]][1]+self.yoff 
-            xy_path.append( (x,y) )
-            xbefore = x
-            ybefore = y
-          
-
-            if (nodo_actual + 1) < len(recorrido):       
-                x = self.mapa.nodos_pos[self.path_nodes[nodo_actual +1]][0]+self.xoff - 10 
-                y = self.mapa.nodos_pos[self.path_nodes[nodo_actual +1]][1]+self.yoff 
+        for i in  range(len(recorrido)):       
+            if i > 0:
+                x = self.mapa.nodos_pos[self.path_nodes[i]][0]+self.xoff - 10 
+                y = self.mapa.nodos_pos[self.path_nodes[i]][1]+self.yoff 
 
                 N = 20
                 mod_x = x - xbefore 
                 mod_y = y - ybefore  
       
-                c = range(N)
-                if nodo_actual == 0:
-                    c.reverse()
- 
+                c = range(N) 
+                c.reverse()
                 for j in c:
                     if j/float(N) < 1:
                         w = x - ( mod_x *  j/float(N) ) + self.xoff # xoff = 0 
                         z = y - ( mod_y *  j/float(N) ) # yoff = 150
                         xy_path.append( (w,z) )
+
                 xy_path.append( (x,y) )
                 xbefore = x
                 ybefore = y
 
-            elif (nodo_actual + 1) == len(recorrido) :
-                pos = self.mapa.nodos_pos[self.final_bar]
-                xy_path.append( (pos[0]+self.xoff, pos[1]+self.yoff))
+        pos = self.mapa.nodos_pos[self.final_bar]
+        xy_path.append( (pos[0]+self.xoff, pos[1]+self.yoff))
 
-        # si devuelve una lista con uno o menos elementos llego al final!
-        
         return xy_path
 
 
