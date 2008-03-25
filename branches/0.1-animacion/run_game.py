@@ -9,5 +9,6 @@ except:
     # probably running inside py2exe which doesn't set __file__
     pass
 
-import main
-main.main()
+import menu
+menu.main()
+
